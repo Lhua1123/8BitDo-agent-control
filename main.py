@@ -21,11 +21,12 @@ os.environ["SDL_JOYSTICK_RAWINPUT"] = "0"
 os.environ["SDL_JOYSTICK_DINPUT"] = "0"
 
 # Xbox 标准布局按钮索引 → 事件名
+# 注意：SDL 2.28 XInput 后端实际布局为 8=L3、9=R3、10=GUIDE（不是 8=GUIDE、9=L3、10=R3）
 BUTTON_NAMES = {
     0: "A", 1: "B", 2: "X", 3: "Y",
     4: "LB", 5: "RB",
-    6: "BACK", 7: "START", 8: "GUIDE",
-    9: "L3", 10: "R3",
+    6: "BACK", 7: "START",
+    8: "L3", 9: "R3", 10: "GUIDE",
 }
 MODIFIERS = {"LT", "LB", "RT", "RB", "L3"}  # 可作修饰层的按键
 

@@ -19,7 +19,8 @@
 - XInput 模式设备名：`Controller (8BitDo Ultimate 2C Wireless (WUKONG))`
 - **6 轴（SDL 2.28 XInput 后端实际布局）**：0/1=左摇杆，**2=LT**，**3/4=右摇杆**，**5=RT**
   - ⚠️ 注意：不是直觉的 3=RT！RT 在 axis 5（详见 architecture.md 坑 2）
-- **11 按钮**：0=A, 1=B, 2=X, 3=Y, 4=LB, 5=RB, 6=BACK, 7=START, 8=GUIDE, 9=L3, 10=R3
+- **11 按钮**：0=A, 1=B, 2=X, 3=Y, 4=LB, 5=RB, 6=BACK, 7=START, **8=L3, 9=R3, 10=GUIDE**
+  - ⚠️ 注意：SDL 2.28 XInput 后端把 L3/R3 放在 8/9，GUIDE 在 10（不是直觉的 8=GUIDE、9=L3、10=R3）
 - **1 hat**：十字键（⚠️ SDL 报的 Y 方向与物理相反，代码已对调，见 architecture.md 坑 3）
 - 无背键（back paddle），无内置麦克风
 - ⚠️ SDL 默认 HIDAPI 后端读不到此手柄（枚举成功但无事件），必须强制 XInput 后端（见 architecture.md 坑 1）
