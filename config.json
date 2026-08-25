@@ -5,7 +5,7 @@
   "repeat_delay_ms": 400,
   "repeat_rate_ms": 80,
   "mouse_deadzone": 0.15,
-  "mouse_speed": 8,
+  "mouse_speed": 10,
   "profiles": [
     {
       "name": "default",
