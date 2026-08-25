@@ -28,8 +28,14 @@ pygame 手柄事件 → mapper 查绑定（修饰层优先，回落默认层）�
 - 绑定名加前缀 `LT+A`/`LB+Y` 等构成修饰层；查找先精确匹配带前缀的，再回落默认层
 - 键名不区分大小写：ENTER/ESC/TAB/LWIN/F1-F12/A-Z/0-9 等（见 injector.py VK_CODES）
 
-## 默认按键表
-A=Enter批准 | B=Esc取消 | X=Tab | Y=Shift+Tab | D-pad/左摇杆=方向键(连发) | RB=Win+H语音 | LB=Ctrl+C | RT=y+回车快速确认 | LT+A/B/X/Y=Ctrl+V/退格连发/Ctrl+Z/Ctrl+C | Start=切配置档
+## 默认按键表（当前版本）
+A=Enter批准 | B=Esc取消 | X=Tab | Y=Shift+Tab | D-pad/左摇杆=方向键(连发) | RB=V→4微信语音 | LB=Ctrl+C | RT=y+回车快速确认 | LT+A=Ctrl+V | LT+B=退格(点按逐个/长按连发) | LT+X=Ctrl+Z | LT+Y=Tab(Alt+Tab切换器循环) | 右摇杆=鼠标移动 | R3=鼠标左键 | L3=鼠标右键 | Start=切配置档
+
+## 鼠标模式（右摇杆）
+- 右摇杆 axis 3/4 → 鼠标相对移动（move_mouse，SendInput MOUSEEVENTF_MOVE）
+- 死区 mouse_deadzone(0.15) + 线性速度 mouse_speed(8 像素/帧，10ms 帧 ≈ 800px/s)
+- R3/L3 → 鼠标左/右键（config 绑定 action="mouse" + button 字段）
+- 注入已验证：move_mouse(60,0) 后光标 X 位移精确 60px
 
 ## 关键实现细节
 - INPUT 结构体 union 以 MOUSEINPUT 尺寸对齐（64 位关键点）；press_vk 用 MapVirtualKeyW 补扫描码

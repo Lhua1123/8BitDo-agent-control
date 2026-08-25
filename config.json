@@ -4,6 +4,8 @@
   "trigger_threshold": 0.5,
   "repeat_delay_ms": 400,
   "repeat_rate_ms": 80,
+  "mouse_deadzone": 0.15,
+  "mouse_speed": 8,
   "profiles": [
     {
       "name": "default",
@@ -22,7 +24,9 @@
         "LT+A":   {"action": "key", "keys": ["LCTRL", "V"]},
         "LT+B":   {"action": "key", "keys": ["BACKSPACE"], "repeat": true},
         "LT+X":   {"action": "key", "keys": ["LCTRL", "Z"]},
-        "LT+Y":   {"action": "key", "keys": ["TAB"]}
+        "LT+Y":   {"action": "key", "keys": ["TAB"]},
+        "L3":     {"action": "mouse", "button": "right"},
+        "R3":     {"action": "mouse", "button": "left"}
       }
     }
   ]

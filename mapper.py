@@ -9,12 +9,13 @@ MODIFIER_ORDER = ("LT", "LB", "RT", "RB", "L3")
 
 @dataclass
 class Binding:
-    """一条按键绑定：action 为 "key"（keys 组合键）或 "sequence"（steps 步骤序列）。"""
+    """一条按键绑定：action 为 "key"（keys 组合键）、"sequence"（steps 步骤序列）或 "mouse"（button 鼠标键）。"""
     action: str
     keys: list = field(default_factory=list)     # action="key" 时的组合键名列表
     steps: list = field(default_factory=list)    # action="sequence" 时的步骤列表
     trigger: str = "press"                       # press / release / both
-    repeat: bool = False                         # 按住连发（仅方向类绑定启用）
+    repeat: bool = False                         # 按住连发（方向键和按钮都支持）
+    button: str = "left"                         # action="mouse" 时的鼠标键：left/right/middle
 
 
 def _parse_binding(raw: dict) -> Binding:
@@ -24,6 +25,7 @@ def _parse_binding(raw: dict) -> Binding:
         steps=list(raw.get("steps", [])),
         trigger=raw.get("trigger", "press"),
         repeat=bool(raw.get("repeat", False)),
+        button=raw.get("button", "left"),
     )
 
 
@@ -40,6 +42,8 @@ class Mapper:
         self.trigger_threshold = float(cfg.get("trigger_threshold", 0.5))
         self.repeat_delay_ms = int(cfg.get("repeat_delay_ms", 400))
         self.repeat_rate_ms = int(cfg.get("repeat_rate_ms", 80))
+        self.mouse_deadzone = float(cfg.get("mouse_deadzone", 0.15))
+        self.mouse_speed = int(cfg.get("mouse_speed", 8))
 
         # 预解析所有配置档的绑定
         self.current_index = 0

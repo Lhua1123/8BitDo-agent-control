@@ -7,10 +7,20 @@ from ctypes import wintypes
 user32 = ctypes.WinDLL("user32", use_last_error=True)
 
 # ---- 常量 ----
+INPUT_MOUSE = 0
 INPUT_KEYBOARD = 1
 KEYEVENTF_KEYUP = 0x0002
 KEYEVENTF_UNICODE = 0x0004
 MAPVK_VK_TO_VSC = 0  # MapVirtualKeyW：虚拟键码 -> 扫描码
+
+# 鼠标事件标志
+MOUSEEVENTF_MOVE = 0x0001
+MOUSEEVENTF_LEFTDOWN = 0x0002
+MOUSEEVENTF_LEFTUP = 0x0004
+MOUSEEVENTF_RIGHTDOWN = 0x0008
+MOUSEEVENTF_RIGHTUP = 0x0010
+MOUSEEVENTF_MIDDLEDOWN = 0x0020
+MOUSEEVENTF_MIDDLEUP = 0x0040
 
 # 指针大小的无符号整型（64 位下为 8 字节）
 ULONG_PTR = ctypes.c_ulonglong if ctypes.sizeof(ctypes.c_void_p) == 8 else ctypes.c_ulong
@@ -100,6 +110,46 @@ def _send_input(items):
         raise RuntimeError(
             f"SendInput 失败：成功 {sent}/{len(arr)}，GetLastError={ctypes.get_last_error()}"
         )
+
+
+def _mouse_event(flags, dx=0, dy=0, data=0):
+    """发送单个鼠标事件（相对移动或按键）。"""
+    item = INPUT()
+    item.type = INPUT_MOUSE
+    item.mi = MOUSEINPUT(dx=dx, dy=dy, mouseData=data, dwFlags=flags, time=0, dwExtraInfo=0)
+    _send_input((item,))
+
+
+def move_mouse(dx, dy):
+    """相对移动鼠标 dx/dy 像素（可为负）。"""
+    _mouse_event(MOUSEEVENTF_MOVE, dx=dx, dy=dy)
+
+
+def mouse_down(button="left"):
+    """按下鼠标键（left/right/middle），用于拖拽等按住场景。"""
+    flags = {
+        "left": MOUSEEVENTF_LEFTDOWN,
+        "right": MOUSEEVENTF_RIGHTDOWN,
+        "middle": MOUSEEVENTF_MIDDLEDOWN,
+    }[button]
+    _mouse_event(flags)
+
+
+def mouse_up(button="left"):
+    """松开鼠标键。"""
+    flags = {
+        "left": MOUSEEVENTF_LEFTUP,
+        "right": MOUSEEVENTF_RIGHTUP,
+        "middle": MOUSEEVENTF_MIDDLEUP,
+    }[button]
+    _mouse_event(flags)
+
+
+def click_mouse(button="left", delay_ms=15):
+    """点击鼠标键（按下-延迟-松开）。"""
+    mouse_down(button)
+    time.sleep(delay_ms / 1000)
+    mouse_up(button)
 
 
 def press_vk(vk, up=False):

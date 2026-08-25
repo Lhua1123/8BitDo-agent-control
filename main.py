@@ -6,7 +6,7 @@ import time
 
 import pygame
 
-from injector import VK_CODES, combo, execute_steps, press_vk
+from injector import VK_CODES, click_mouse, combo, execute_steps, move_mouse, press_vk
 from mapper import Mapper
 
 # 无头模式，避免 pygame 弹出窗口
@@ -62,6 +62,7 @@ class GamepadApp:
         self.lt_on = False              # 扳机按下状态（带滞回）
         self.rt_on = False
         self.repeat_deadlines = {}      # 方向名 -> 下次连发时间戳
+        self.mouse_stick = [0.0, 0.0]   # 右摇杆 x/y 轴值（axis 3/4），用于鼠标移动
 
     # ---- 绑定执行 ----
 
@@ -76,8 +77,10 @@ class GamepadApp:
             return b
         if b.action == "key":
             combo(b.keys)
-        else:
+        elif b.action == "sequence":
             execute_steps(b.steps)
+        elif b.action == "mouse":
+            click_mouse(b.button)
         return b
 
     def handle_button(self, name, pressed):
@@ -176,6 +179,25 @@ class GamepadApp:
         else:
             self.rt_on = on
 
+    # ---- 右摇杆 → 鼠标 ----
+
+    def on_mouse_axis(self, axis, value):
+        """右摇杆轴 3/4：记录当前偏移，供每帧移动鼠标。"""
+        self.mouse_stick[axis - 3] = value
+
+    def move_mouse_by_stick(self):
+        """根据右摇杆偏移移动鼠标：死区 + 线性速度映射（每帧调用）。"""
+        x, y = self.mouse_stick
+        dz = self.mapper.mouse_deadzone
+        speed = self.mapper.mouse_speed
+        dx = dy = 0
+        if abs(x) > dz:
+            dx = int((x - dz * (1 if x > 0 else -1)) * speed)
+        if abs(y) > dz:
+            dy = int((y - dz * (1 if y > 0 else -1)) * speed)
+        if dx or dy:
+            move_mouse(dx, dy)
+
     # ---- 主循环 ----
 
     def run(self):
@@ -195,6 +217,9 @@ class GamepadApp:
                             self.on_move_axis(e.axis, e.value)
                         elif e.axis == 2:
                             self.on_trigger("LT", e.value)
+                        elif e.axis in (3, 4):
+                            # 右摇杆 → 鼠标移动（axis 3=X、4=Y）
+                            self.on_mouse_axis(e.axis, e.value)
                         elif e.axis == 5:
                             # 注意：SDL 2.28 XInput 后端轴布局为 0/1=左摇杆、2=LT、
                             # 3/4=右摇杆、5=RT（不是 3=RT！）
@@ -202,6 +227,7 @@ class GamepadApp:
                     elif e.type == pygame.JOYHATMOTION:
                         self.update_dir_source(self.hat_dirs, hat_to_dirs(e.value))
                 self.fire_repeats()
+                self.move_mouse_by_stick()
                 clock.tick(100)  # 约 10ms 一帧，CPU 占用低
         except KeyboardInterrupt:
             pass
