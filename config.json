@@ -1,0 +1,29 @@
+{
+  "deadzone": 0.35,
+  "hysteresis": 0.1,
+  "trigger_threshold": 0.5,
+  "repeat_delay_ms": 400,
+  "repeat_rate_ms": 80,
+  "profiles": [
+    {
+      "name": "default",
+      "bindings": {
+        "A":      {"action": "key", "keys": ["ENTER"]},
+        "B":      {"action": "key", "keys": ["ESCAPE"]},
+        "X":      {"action": "key", "keys": ["TAB"]},
+        "Y":      {"action": "key", "keys": ["LSHIFT", "TAB"], "trigger": "press"},
+        "UP":     {"action": "key", "keys": ["UP"], "repeat": true},
+        "DOWN":   {"action": "key", "keys": ["DOWN"], "repeat": true},
+        "LEFT":   {"action": "key", "keys": ["LEFT"], "repeat": true},
+        "RIGHT":  {"action": "key", "keys": ["RIGHT"], "repeat": true},
+        "RB":     {"action": "sequence", "steps": [{"type": "key", "keys": ["V"]}, {"type": "wait", "ms": 150}, {"type": "key", "keys": ["4"]}]},
+        "LB":     {"action": "key", "keys": ["LCTRL", "C"]},
+        "RT":     {"action": "sequence", "steps": [{"type": "text", "value": "y"}, {"type": "wait", "ms": 50}, {"type": "key", "keys": ["ENTER"]}]},
+        "LT+A":   {"action": "key", "keys": ["LCTRL", "V"]},
+        "LT+B":   {"action": "key", "keys": ["BACKSPACE"], "repeat": true},
+        "LT+X":   {"action": "key", "keys": ["LCTRL", "Z"]},
+        "LT+Y":   {"action": "key", "keys": ["TAB"]}
+      }
+    }
+  ]
+}

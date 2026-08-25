@@ -1,0 +1,10 @@
+# Python
+__pycache__/
+*.pyc
+
+# 调试日志与临时文件
+gamepad_log*.txt
+devices_*.txt
+
+# 误建的嵌套副本目录
+gamepad-agent/
